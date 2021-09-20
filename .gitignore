@@ -1,5 +1,6 @@
 src/res/*.m4a
 src/res/*.wav
+src/res/*.mp3
 src/saves
 src/test
 .idea
