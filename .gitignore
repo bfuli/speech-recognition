@@ -1,4 +1,5 @@
-!src/res/desc.txt
+src/res/*.m4a
+src/res/*.wav
 src/saves
 src/test
 .idea
