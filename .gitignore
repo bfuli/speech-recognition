@@ -3,4 +3,6 @@ src/res/*.wav
 src/res/*.mp3
 src/saves
 src/test
+src/mytest.py
+src/SpeechRecognition.py
 .idea
