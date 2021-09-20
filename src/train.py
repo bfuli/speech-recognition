@@ -82,8 +82,8 @@ for i in range(epoch):
     x += [i + 1]
     y += one_test(test_loader)  # 进行一次测试，并返回该次测试的精确度
 
-# 保存训练好的模型，model_conv1：表示卷积网络的第一个版本
-torch.save(model, "saves/model_conv1.pth")
+# 保存训练好的模型，model_conv1：表示卷积网络的第一个版本,lr：当前学习速率
+torch.save(model, "saves/model_conv1_lr=" + str(learning_rate) + ".pth")
 
 # 绘制准确度曲线
 plt.title("Accuracy:lr=" + str(learning_rate))
