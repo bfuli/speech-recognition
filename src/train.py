@@ -8,6 +8,7 @@ from torch import nn
 from dataset import AudioDataSet
 from net import LinearNet, ConvNet
 import matplotlib.pyplot as plt
+import time
 
 
 def one_train(data_loader):
@@ -52,7 +53,7 @@ annotation_file = r"res\desc.txt"
 # 图像文件的根目录
 audio_dir = r"C:\Users\fuli\Desktop\ABCD\录音_转换后"
 
-batch_size = 4
+batch_size = 8
 
 # 标记数据集中用于训练样本的比例，用于测试的样本就是(1-train_ratio)
 train_ratio = 0.8
@@ -65,7 +66,7 @@ test_loader = DataLoader(test_data, batch_size, True)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-epoch = 20
+epoch = 200
 model = ConvNet().to(device)
 loss_fn = nn.CrossEntropyLoss()
 learning_rate = 1e-5
@@ -75,6 +76,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 # 用于绘制图线，直观展示精确度随训练次数的变化趋势
 x, y = [], []
 
+# 获取训练开始时间
+start = time.time()
 for i in range(epoch):
     print(f"第{i + 1}轮训练.............")
     one_train(train_loader)  # 进行一轮训练

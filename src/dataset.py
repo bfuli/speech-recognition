@@ -38,14 +38,20 @@ class AudioDataSet(Dataset):
         :return: 返回：标签的下标， 二维tensor
         """
         filePath = os.path.join(self.audio_dir, self.audio_names[index])
-        y, sr = librosa.load(filePath, sr=None)
-        # 提取Log-MelSpectrogram特征
-        melspec = librosa.feature.melspectrogram(y, sr, n_fft=1024, n_mels=128)
-        logmelspec = librosa.power_to_db(melspec)
-        # resampled = np.mean(logmelspec, axis=0)
-        resampled = librosa.resample(y=logmelspec, orig_sr=sr, target_sr=np.floor(50 * sr / len(logmelspec[1])), fix=True)
-        data = torch.tensor(resampled)
+        data = audio2data(filePath)
+
         return data, self.classes.index(self.labels[index])
 
     def __len__(self):
         return len(self.labels)
+
+
+def audio2data(filePath):
+    y, sr = librosa.load(filePath, sr=None)
+    # 提取Log-MelSpectrogram特征
+    melspec = librosa.feature.melspectrogram(y, sr, n_fft=1024, n_mels=128)
+    logmelspec = librosa.power_to_db(melspec)
+    # resampled = np.mean(logmelspec, axis=0)
+    resampled = librosa.resample(y=logmelspec, orig_sr=sr, target_sr=np.floor(50 * sr / len(logmelspec[1])),
+                                 fix=True)
+    return torch.tensor(resampled)
