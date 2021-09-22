@@ -82,12 +82,21 @@ for i in range(epoch):
     x += [i + 1]
     y += one_test(test_loader)  # 进行一次测试，并返回该次测试的精确度
 
-# 保存训练好的模型，model_conv1：表示卷积网络的第一个版本,lr：当前学习速率
-torch.save(model, "saves/model_conv1_lr=" + str(learning_rate) + ".pth")
+# 保存训练好的模型，model_convi：表示卷积网络的第i个版本,lr：当前学习速率
+model_name = "model_conv7"
+torch.save(model, "saves/" + model_name + "_lr=" + str(learning_rate) + ".pth")
+
+# 获取训练结束时间，并计算总耗时，单位：分钟
+end = time.time()
+print(f"总耗时：{(end - start) / 60:>0.1f} min")
 
 # 绘制准确度曲线
-plt.title("Accuracy:lr=" + str(learning_rate))
+plt.title(model_name + ":lr=" + str(learning_rate))
 plt.xlabel("epoch")
 plt.ylabel("Accuracy")
 plt.plot(x, y)
-plt.show()
+
+# 每隔5个点，显示一个点的数值
+for a, b in zip(x, y):
+    if a % 5 == 0 or b > 90:
+        plt.text(a, b, "%.0f" % b, fontdict={"fontsize": 8})
