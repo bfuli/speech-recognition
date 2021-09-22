@@ -100,3 +100,4 @@ plt.plot(x, y)
 for a, b in zip(x, y):
     if a % 5 == 0 or b > 90:
         plt.text(a, b, "%.0f" % b, fontdict={"fontsize": 8})
+plt.show()
