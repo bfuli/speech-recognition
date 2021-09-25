@@ -25,7 +25,7 @@ def one_train(data_loader):
         loss.backward()
         optimizer.step()
 
-        if batch % 40 == 0:
+        if batch % 20 == 0:
             loss, current = loss.item(), batch * len(data)
             print(f"loss: {loss:>7f}  [{current:>5d}/{total_size:>5d}]")
 
@@ -48,6 +48,31 @@ def one_test(data_loader):
     return [100 * correct]
 
 
+def category_Accuracy(model, data_loader):
+    """分别计算每个分类的准确度"""
+    classes = ['A', 'B', 'C', 'D']
+    correct_pred = {classname: 0 for classname in classes}
+    total_pred = {classname: 0 for classname in classes}
+
+    model.eval()
+    with torch.no_grad():
+        for datas, labels in data_loader:
+            datas = datas.to(device)
+            labels = labels.to(device)
+
+            outputs = model(datas)
+            preds = outputs.argmax(1)
+            for label, prediction in zip(labels, preds):
+                if label == prediction:
+                    correct_pred[classes[label]] += 1
+                total_pred[classes[label]] += 1
+
+    for classname, correct_count in correct_pred.items():
+        accuracy = 100 * float(correct_count) / total_pred[classname]
+        print("Accuracy for class {:5s} is: {:.1f} %".format(classname,
+                                                             accuracy))
+
+
 # 标签文件位置
 annotation_file = r"res\desc.txt"
 # 图像文件的根目录
@@ -58,15 +83,15 @@ batch_size = 8
 # 标记数据集中用于训练样本的比例，用于测试的样本就是(1-train_ratio)
 train_ratio = 0.8
 
-train_data = AudioDataSet(annotation_file, audio_dir, is_train=True, train_ratio=train_ratio)
-test_data = AudioDataSet(annotation_file, audio_dir, is_train=False, train_ratio=train_ratio)
+# 获取训练、测试数据集
+train_data, test_data = AudioDataSet.get_dataset(annotation_file, audio_dir, train_ratio, is_shuffle=True)
 
 train_loader = DataLoader(train_data, batch_size, shuffle=True)
 test_loader = DataLoader(test_data, batch_size, True)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-epoch = 200
+epoch = 100
 model = ConvNet().to(device)
 loss_fn = nn.CrossEntropyLoss()
 learning_rate = 1e-5
@@ -85,13 +110,17 @@ for i in range(epoch):
     x += [i + 1]
     y += one_test(test_loader)  # 进行一次测试，并返回该次测试的精确度
 
-# 保存训练好的模型，model_convi：表示卷积网络的第i个版本,lr：当前学习速率
-model_name = "model_conv7"
+# 保存训练好的模型，
+# model_convi：表示卷积网络的第i个版本,lr：当前学习速率；data_shuffle：表示当前使用的数据集是打乱之后的
+model_name = "model_conv8_data2_shuffle"
 torch.save(model, "saves/" + model_name + "_lr=" + str(learning_rate) + ".pth")
 
 # 获取训练结束时间，并计算总耗时，单位：分钟
 end = time.time()
 print(f"总耗时：{(end - start) / 60:>0.1f} min")
+
+# 测试每个分类的精确度
+category_Accuracy(model, test_loader)
 
 # 绘制准确度曲线
 plt.title(model_name + ":lr=" + str(learning_rate))

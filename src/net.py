@@ -7,17 +7,17 @@ from torch import nn
 class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
-        cfg = [16, 32, 32, 64, 64, 128, 128]
+        cfg = [16, 32, 32, 64, 64, 128, 64]
         self.layers = self.make_layers(cfg, batch_norm=True)
         self.avgpool = nn.AdaptiveAvgPool2d((5, 5))
         self.flatten = nn.Flatten()
         self.classifier = nn.Sequential(
-            nn.Linear(128 * 5 * 5, 256),
+            nn.Linear(64 * 5 * 5, 256),
             nn.ReLU(True),
-            nn.Dropout(),
+            # nn.Dropout(),
             nn.Linear(256, 128),
             nn.ReLU(True),
-            nn.Dropout(),
+            # nn.Dropout(),
             nn.Linear(128, 4),
         )
 

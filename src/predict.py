@@ -2,7 +2,7 @@
 # Author:fuli
 # Date:2021/9/21
 import torch
-from dataset import audio2data
+from dataset import AudioDataSet
 import os
 
 
@@ -17,7 +17,7 @@ def test_audio(model):
     while True:
         try:
             audio_file = input("input audio file:")
-            data = audio2data(os.path.join("res/转换后", audio_file)).to(device)
+            data = AudioDataSet.audio2data(os.path.join("res/转换后/wav", audio_file)).to(device)
             data = data.unsqueeze(0)
             model.eval()
             pred = model(data)
@@ -28,6 +28,7 @@ def test_audio(model):
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model_path = "saves/model_conv1_2_lr=1e-06.pth"
+model_name = "model_conv8_data_shuffle_lr=1e-05.pth"
+model_path = "saves/" + model_name
 model = torch.load(model_path)
 test_audio(model)
