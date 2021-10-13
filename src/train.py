@@ -50,7 +50,7 @@ def one_test(data_loader):
 
 def category_Accuracy(model, data_loader):
     """分别计算每个分类的准确度"""
-    classes = ['A', 'B', 'C', 'D']
+    classes = ["A", "B", "C", "D"]
     correct_pred = {classname: 0 for classname in classes}
     total_pred = {classname: 0 for classname in classes}
 
@@ -74,9 +74,9 @@ def category_Accuracy(model, data_loader):
 
 
 # 标签文件位置
-annotation_file = r"res\desc.txt"
+annotation_file = r"C:\Users\fuli\Desktop\desc.txt"
 # 图像文件的根目录
-audio_dir = r"C:\Users\fuli\Desktop\ABCD\录音_转换后"
+audio_dir = r"C:\Users\fuli\Desktop\录音_转换后"
 
 batch_size = 8
 
@@ -92,7 +92,12 @@ test_loader = DataLoader(test_data, batch_size, True)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 epoch = 100
+
 model = ConvNet().to(device)
+# model_name = "model_conv8_data_shuffle_lr=1e-05.pth"
+# model_path = "saves/" + model_name
+# model = torch.load(model_path)
+
 loss_fn = nn.CrossEntropyLoss()
 learning_rate = 1e-5
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -111,8 +116,11 @@ for i in range(epoch):
     y += one_test(test_loader)  # 进行一次测试，并返回该次测试的精确度
 
 # 保存训练好的模型，
-# model_convi：表示卷积网络的第i个版本,lr：当前学习速率；data_shuffle：表示当前使用的数据集是打乱之后的
-model_name = "model_conv8_data2_shuffle"
+# model_convi：表示卷积网络的第i个版本,lr：当前学习速率；
+# data_shuffle：表示当前使用的数据集是打乱之后的;
+# classes：表示分类是["B", "A", "C", "D"] ;classes2: 表示分类是["A", "C", "B", "D"]
+# per：表示加入了自己录的语音文件进行训练
+model_name = "model_conv8_data_shuffle_per"
 torch.save(model, "saves/" + model_name + "_lr=" + str(learning_rate) + ".pth")
 
 # 获取训练结束时间，并计算总耗时，单位：分钟
@@ -131,5 +139,5 @@ plt.plot(x, y)
 # 每隔5个点，显示一个点的数值
 for a, b in zip(x, y):
     if a % 5 == 0 or b > 90:
-        plt.text(a, b, "%.0f" % b, fontdict={"fontsize": 8})
+        plt.text(a, b, "%.1f" % b, fontdict={"fontsize": 8})
 plt.show()
